@@ -1,11 +1,45 @@
 const http = require('http');
+const https = require('https');
 const url = require('url');
 const StringDecoder = require('string_decoder').StringDecoder;
 const config = require('./config');
+const fs = require('fs');
 
+let httpsServerOptions = {
+    'key': fs.readFileSync('./https/key.pem'),
+    'cert': fs.readFileSync('./https/cert.pem'),
+};
 
-var server = http.createServer((req, res) => {
+// 定义服务
+var httpServer = http.createServer((req, res) => {
+    myServer(req.res)
+})
+var httpsServer = https.createServer(httpsServerOptions, (req, res) => {
+    myServer(req.res)
+})
 
+// 启动服务，并动态监听接口
+httpServer.listen(config.httpPort, () => {
+    console.log('listening on', config.httpPort, config.envName);
+});
+httpsServer.listen(config.httpsPort, () => {
+    console.log('[security] listening on', config.httpsPort, config.envName);
+});
+
+// 定义路由处理函数对象
+var handlers = {};
+
+handlers.sample = function(data, callback) {
+    // 回调一个http code以及数据
+    callback(406, {'name': 'sample handler'});
+};
+
+handlers.notFount = function(data, callback) {
+    callback(404);
+};
+
+// 请求主体
+var myServer = function (req, res) {
     // 获取url
     var parseUrl = url.parse(req.url, true);
 
@@ -64,24 +98,7 @@ var server = http.createServer((req, res) => {
             console.log(buffer, statusCode, payloadString)
         })
     })
-})
-
-// 启动服务，并动态监听接口
-server.listen(config.port, () => {
-    console.log('listening on', config.port, config.name);
-});
-
-// 定义路由处理函数对象
-var handlers = {};
-
-handlers.sample = function(data, callback) {
-    // 回调一个http code以及数据
-    callback(406, {'name': 'sample handler'});
-};
-
-handlers.notFount = function(data, callback) {
-    callback(404);
-};
+}
 
 
 // 定义请求路由
