@@ -12,10 +12,10 @@ let httpsServerOptions = {
 
 // 定义服务
 var httpServer = http.createServer((req, res) => {
-    myServer(req.res)
+    myServer(req,res)
 })
 var httpsServer = https.createServer(httpsServerOptions, (req, res) => {
-    myServer(req.res)
+    myServer(req,res)
 })
 
 // 启动服务，并动态监听接口
@@ -29,10 +29,14 @@ httpsServer.listen(config.httpsPort, () => {
 // 定义路由处理函数对象
 var handlers = {};
 
-handlers.sample = function(data, callback) {
-    // 回调一个http code以及数据
-    callback(406, {'name': 'sample handler'});
-};
+// handlers.sample = function(data, callback) {
+//     // 回调一个http code以及数据
+//     callback(406, {'name': 'sample handler'});
+// };
+
+handlers.ping = function(data, callback) {
+    callback(200);
+}
 
 handlers.notFount = function(data, callback) {
     callback(404);
@@ -103,5 +107,5 @@ var myServer = function (req, res) {
 
 // 定义请求路由
 var router = {
-    'sample': handlers.sample
+    'ping': handlers.ping
 };
