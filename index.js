@@ -4,11 +4,22 @@ const url = require('url');
 const StringDecoder = require('string_decoder').StringDecoder;
 const config = require('./config');
 const fs = require('fs');
-
-let httpsServerOptions = {
+const _data = require('./lib/data')
+const httpsServerOptions = {
     'key': fs.readFileSync('./https/key.pem'),
     'cert': fs.readFileSync('./https/cert.pem'),
 };
+
+// @TODO delete this
+// _data.create('test', 'newFile', {'foo': '2123213123'}, function (err) {
+//     console.log('this was the error:', err);
+// })
+// _data.read('test', 'newFile', function(err,data) {
+//     console.log(err, data)
+// })
+// _data.delete('test', 'newFile', function(err,data) {
+//     console.log(err, data)
+// })
 
 // 定义服务
 var httpServer = http.createServer((req, res) => {
@@ -35,7 +46,7 @@ var handlers = {};
 // };
 
 handlers.ping = function(data, callback) {
-    callback(200);
+    callback(200, {});
 }
 
 handlers.notFount = function(data, callback) {
