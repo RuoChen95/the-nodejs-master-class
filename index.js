@@ -5,6 +5,7 @@ const StringDecoder = require('string_decoder').StringDecoder;
 const config = require('./config');
 const fs = require('fs');
 const _data = require('./lib/data')
+const handlers = require('./lib/handlers')
 const httpsServerOptions = {
     'key': fs.readFileSync('./https/key.pem'),
     'cert': fs.readFileSync('./https/cert.pem'),
@@ -17,9 +18,9 @@ const httpsServerOptions = {
 // _data.read('test', 'newFile', function(err,data) {
 //     console.log(err, data)
 // })
-// _data.delete('test', 'newFile', function(err,data) {
-//     console.log(err, data)
-// })
+_data.delete('test', 'newFile', function(err,data) {
+    console.log(err, data)
+})
 
 // 定义服务
 var httpServer = http.createServer((req, res) => {
@@ -52,6 +53,8 @@ handlers.ping = function(data, callback) {
 handlers.notFount = function(data, callback) {
     callback(404);
 };
+
+
 
 // 请求主体
 var myServer = function (req, res) {
@@ -118,5 +121,6 @@ var myServer = function (req, res) {
 
 // 定义请求路由
 var router = {
-    'ping': handlers.ping
+    //'sample': handlers.sample,
+    'ping': handlers.ping,
 };
